@@ -257,17 +257,12 @@ else
     echo "Completed in $SECONDS seconds"
 fi
 ##
-## Reconnect to home wifi.
-##
-sudo nmcli connection up mywifinetwork
-
-## 
 ## Rename STR.EDF to the correct filename STR.edf.
 ##
 mv /home/rpi/cpapsrc/AirSense11-Data/STR.EDF /home/rpi/cpapsrc/AirSense11-Data/STR.edf -f
 ##
-## Optional, run the sshpass command. You need to create the scppassfile and install sshpass first.
-## You need to change homePCuser and homePCIPAddress to reflect your environment...as well as the paths, if you chose different paths and rpi if you chose a different username for RPi
-## 
-sshpass -f /home/rpi/cpapsrc/scppassfile scp -r /home/rpi/cpapsrc/AirSense11-Data/* homePCuser@homePCIPAddress:/home/homePCuser/cpapdst/AirSense11-Data
+## Reconnect to home wifi.
+##
+sudo nmcli connection up mywifinetwork
+
 
