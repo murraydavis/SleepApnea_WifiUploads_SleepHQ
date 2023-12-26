@@ -54,6 +54,7 @@ As you see from above, there are only two commands in the script. The first comm
 
 I have a wonky network issue that I have never been able to resolve. Connections between nodes in my network sometimes simply drop. I have researched and troubleshot this issue for the past couple of years. Likely suspects are usually duplicate IPs, incorrect routes, faulty NICs, rogue DHCP servers, etc. I have not found the root cause. The only work around in my network scripts is to test if a route exists to the PC to which I want to connect. From my laptop, before I run my sshpass commands, I test if there is a route to RPi whose IP address is 192.168.50.224. If there is no route, I add the route. If there is a route, I simply run the commands.
 
+```
 [scripts]$ cat getcpap.sh
 ## add route to cpap if doesn't exist
 
@@ -70,6 +71,7 @@ then
     sshpass -f /home/mgd/cpapdst/rpipass ssh rpi@192.168.50.224 /home/rpi/cpapsrc/wget.sh
     sshpass -f /home/mgd/cpapdst/rpipass scp -r rpi@192.168.50.224:/home/rpi/cpapsrc/AirSense11-Data/* /home/mgd/cpapdst/AirSense11-Data
 fi
+```
 
 ### Second step, create the cronjob.
 
