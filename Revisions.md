@@ -12,6 +12,6 @@
 
 5. Added document, OptionalConfiguration.md
 
-### 2nd Revision
+### 2nd Revision, Dec. 26, 2023
 
 1. Fixed date on this file and cron_logrotate.md (missing code markers).
