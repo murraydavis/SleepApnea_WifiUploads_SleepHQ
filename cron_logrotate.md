@@ -207,6 +207,92 @@ The create command is just replicating the permissions on mycron.log that were a
 
 That's it. We now have mycron.log on a two week cycle. There is no great need for too many logs. Either the script runs or it does not run.
 
+### One final step
+
+My mycron.log file was not rotating according to the schedule. What was wrong? Turns out that I needed first to test the validity of my configuration and then add one line to
+
+Resources used to resolve this issue:
+
+[severfault](https://serverfault.com/questions/375004/logrotate-not-rotating-the-logs)
+[microfocus](https://support.microfocus.com/kb/doc.php?id=7005219)
+
+
+```
+[logrotate.d]$ sudo logrotate -d -f mycronlog
+warning: logrotate in debug mode does nothing except printing debug messages!  Consider using verbose mode (-v) instead if this is not what you want.
+
+reading config file mycronlog
+Reading state from file: /var/lib/logrotate/logrotate.status
+Allocating hash table for state file, size 64 entries
+Creating new state
+.
+.
+.
+Creating new state
+
+Handling 1 logs
+
+rotating pattern: /home/mgd/.var/log/cronlog/mycron.log  forced from command line (5 rotations)
+empty log files are not rotated, old logs are removed
+considering log /home/mgd/.var/log/cronlog/mycron.log
+error: skipping "/home/mgd/.var/log/cronlog/mycron.log" because parent directory has insecure permissions (It's world writable or writable by group which is not "root") Set "su" directive in config file to tell logrotate which user/group should be used for rotation.
+
+```
+So, there were insecure permissions on the parent directory of mycron.log. The solution was to add a line to mycronlog, my logrotate file. All that I needed to do was add the line: su mgd mgd, at the beginning of the file. This lines gives my account & group super user privilege on the file.
+
+```
+[logrotate.d]$ sudo vi mycronlog # Use vi to add the line.
+[logrotate.d]$ cat mycronlog
+/home/mgd/.var/log/cronlog/mycron.log {
+  su mgd mgd
+  rotate 5
+  weekly
+  compress
+  missingok
+  notifempty
+  create 0664 mgd mgd
+}
+
+# Let's rerun the test logrotate command again. No errors this time.
+
+
+[logrotate.d]$ sudo logrotate -d -f mycronlog
+warning: logrotate in debug mode does nothing except printing debug messages!  Consider using verbose mode (-v) instead if this is not what you want.
+
+reading config file mycronlog
+Reading state from file: /var/lib/logrotate/logrotate.status
+Allocating hash table for state file, size 64 entries
+Creating new state
+.
+.
+.
+Creating new state
+
+Handling 1 logs
+
+rotating pattern: /home/mgd/.var/log/cronlog/mycron.log  forced from command line (5 rotations)
+empty log files are not rotated, old logs are removed
+switching euid from 0 to 1000 and egid from 0 to 1000 (pid 9972)
+considering log /home/mgd/.var/log/cronlog/mycron.log
+  Now: 2024-01-24 16:17
+  Last rotated at 2024-01-23 00:00
+  log needs rotating
+rotating log /home/mgd/.var/log/cronlog/mycron.log, log->rotateCount is 5
+dateext suffix '-20240124'
+glob pattern '-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'
+set default create context to unconfined_u:object_r:user_home_t:s0
+renaming /home/mgd/.var/log/cronlog/mycron.log.5.gz to /home/mgd/.var/log/cronlog/mycron.log.6.gz (rotatecount 5, logstart 1, i 5),
+renaming /home/mgd/.var/log/cronlog/mycron.log.4.gz to /home/mgd/.var/log/cronlog/mycron.log.5.gz (rotatecount 5, logstart 1, i 4),
+renaming /home/mgd/.var/log/cronlog/mycron.log.3.gz to /home/mgd/.var/log/cronlog/mycron.log.4.gz (rotatecount 5, logstart 1, i 3),
+renaming /home/mgd/.var/log/cronlog/mycron.log.2.gz to /home/mgd/.var/log/cronlog/mycron.log.3.gz (rotatecount 5, logstart 1, i 2),
+renaming /home/mgd/.var/log/cronlog/mycron.log.1.gz to /home/mgd/.var/log/cronlog/mycron.log.2.gz (rotatecount 5, logstart 1, i 1),
+log /home/mgd/.var/log/cronlog/mycron.log.6.gz doesn't exist -- won't try to dispose of it
+set default create context to unconfined_u:object_r:user_home_t:s0
+renaming /home/mgd/.var/log/cronlog/mycron.log to /home/mgd/.var/log/cronlog/mycron.log.1
+creating new /home/mgd/.var/log/cronlog/mycron.log mode = 0664 uid = 1000 gid = 1000
+compressing log with: /bin/gzip
+switching euid from 1000 to 0 and egid from 1000 to 0 (pid 9972)
+```
 
 ### Troubleshooting - It is unlikely that you will have to follow these steps.
 

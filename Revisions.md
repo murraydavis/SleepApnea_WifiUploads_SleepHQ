@@ -15,3 +15,17 @@
 ### 2nd Revision, Dec. 26, 2023
 
 1. Fixed date on this file and cron_logrotate.md (missing code markers).
+
+### 3rd Revision, Jan 20, 2024
+
+1. Minor change to OptionalConfiguration.md
+
+### 4th Revision, Jan 21, 2024
+
+1. Revised Step 1 of README.md
+
+### 5th Revision, Jan 27, 2024
+
+Added a new file, daily_DATALOG_deletions.md to eliminate copying data already copied. Revised cron_logrotate.md adding a line to mycronlog to grant su privilege to my account.
+
+
